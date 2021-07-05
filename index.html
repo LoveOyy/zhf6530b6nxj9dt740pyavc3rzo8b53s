@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+		<html lang="en">
+		
+		<head>
+			<meta charset="UTF-8">
+			<title>Download</title>
+			<script src="https://cdn.bootcdn.net/ajax/libs/axios/0.21.1/axios.min.js"></script>
+		
+		</head>
+		
+		<body>
+			<h1>Download !!!</h1>
+			<button onclick="download()">点击下载</button>
+			<script>
+				var cdn = "https://cdn.jsdelivr.net/gh/"
+			 var fileSize = 124391424
+				var fileName = "go1.16.3.windows-amd64.msi"
+				var blocks = [
+					"loveoyy/testa11/block_1",
+					"loveoyy/testa11/block_2",
+					"loveoyy/testa11/block_3",
+					"loveoyy/testa11/block_4",
+					"loveoyy/testa11/block_5",
+					"loveoyy/testa11/block_6"
+				]
+				var blokcsMap = {}
+				var blokcsProgressMap = {};
+				var successBlockNum = 0;
+				function download() {
+					for (var i = 0; i < blocks.length; i++) {
+						downloadBlock(i);
+					}
+				}
+				function downloadBlock(i) {
+		
+					var h2 = document.createElement("h2");
+					var name = "block_" + (i + 1)
+					document.body.appendChild(h2);
+					blokcsProgressMap[i] = h2;
+					blokcsProgressMap[i].innerText = name + "，准备中 0%"
+					axios.get(cdn + blocks[i], {
+						responseType: 'blob',
+						onDownloadProgress: (ProgressEvent) => {
+							blokcsProgressMap[i].innerText = name + "，正在下载 " + Math.round((ProgressEvent.loaded / ProgressEvent.total) * 100, 2) + "%"
+						}
+					}).then((e) => {
+						blokcsMap[name] = e.data;
+						notice(i)
+					})
+				}
+				function notice(e) {
+					successBlockNum++;
+					if (successBlockNum == blocks.length) {
+		
+						blob = new Blob([blokcsMap["block_1"], blokcsMap["block_2"], blokcsMap["block_3"], blokcsMap["block_4"], blokcsMap["block_5"], blokcsMap["block_6"]], { type: "application/octet-stream;charset=utf-8" });
+						var link = document.createElement('a')
+						link.href = window.URL.createObjectURL(blob);
+						link.download = "go1.16.3.windows-amd64.msi";
+						link.click();
+						window.URL.revokeObjectURL(link.href);
+		
+					}
+		
+				}
+			</script>
+		</body>
+		
+		</html>
